@@ -205,6 +205,22 @@ class OpenAIWrapper(BaseAPI):
             headers = {'Content-Type': 'application/json', 'Authorization': self.key}
         else:
             headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {self.key}'}
+        from openai import OpenAI
+        client = OpenAI(
+            api_key=self.key,
+            base_url=self.api_base,
+            default_headers={},
+        )
+
+        response = client.chat.completions.create(
+            messages=input_msgs,
+            model=self.model,
+            max_tokens=max_tokens,
+            n=1,
+            temperature=temperature,
+            **kwargs
+        )
+        """
         payload = dict(
             model=self.model,
             messages=input_msgs,
@@ -218,6 +234,7 @@ class OpenAIWrapper(BaseAPI):
         ret_code = response.status_code
         ret_code = 0 if (200 <= int(ret_code) < 300) else ret_code
         answer = self.fail_msg
+        """
         try:
             print(response.text)
             resp_struct = json.loads(response.text)
